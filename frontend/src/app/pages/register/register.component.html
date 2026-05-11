@@ -1,0 +1,96 @@
+<div class="auth-wrapper">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="auth-card card">
+    <!-- Logo -->
+    <div class="logo-mark">
+      <div class="logo-icon">🏦</div>
+      <span class="logo-name gradient-text">VinUSBank</span>
+    </div>
+
+    <h1 style="font-size:1.75rem; margin-bottom:0.4rem;">Create your account</h1>
+    <p class="text-muted text-sm" style="margin-bottom:2rem;">Join VinUSBank — your AI-powered financial future</p>
+
+    <!-- Alerts -->
+    @if (errorMessage) {
+      <div class="alert alert-danger" style="margin-bottom:1.5rem;">
+        <span>⚠️</span> {{ errorMessage }}
+      </div>
+    }
+    @if (successMessage) {
+      <div class="alert alert-success" style="margin-bottom:1.5rem;">
+        <span>✅</span> {{ successMessage }}
+      </div>
+    }
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" id="register-form">
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input
+            id="reg-email"
+            type="email"
+            class="form-control"
+            placeholder="you@example.com"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input
+            id="reg-password"
+            type="password"
+            class="form-control"
+            placeholder="Minimum 8 characters"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm">Confirm Password</label>
+          <input
+            id="reg-confirm"
+            type="password"
+            class="form-control"
+            placeholder="Re-enter your password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+
+        <button
+          id="register-submit"
+          type="submit"
+          class="btn btn-primary btn-full mt-2"
+          [disabled]="isLoading"
+        >
+          @if (isLoading) {
+            <span class="spinner"></span> Creating Account...
+          } @else {
+            Create Account  →
+          }
+        </button>
+
+      </div>
+    </form>
+
+    <div class="divider mt-3">or</div>
+
+    <p class="text-center text-sm text-muted mt-2">
+      Already have an account?
+      <a routerLink="/login" class="text-link"> Sign in</a>
+    </p>
+  </div>
+</div>

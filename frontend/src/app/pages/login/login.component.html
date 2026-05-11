@@ -1,0 +1,77 @@
+<div class="auth-wrapper">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="auth-card card">
+    <!-- Logo -->
+    <div class="logo-mark">
+      <div class="logo-icon">🏦</div>
+      <span class="logo-name gradient-text">VinUSBank</span>
+    </div>
+
+    <h1 style="font-size:1.75rem; margin-bottom:0.4rem;">Welcome back</h1>
+    <p class="text-muted text-sm" style="margin-bottom:2rem;">Sign in to access your banking dashboard</p>
+
+    <!-- Error Alert -->
+    @if (errorMessage) {
+      <div class="alert alert-danger" style="margin-bottom:1.5rem;">
+        <span>⚠️</span> {{ errorMessage }}
+      </div>
+    }
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" id="login-form">
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input
+            id="login-email"
+            type="email"
+            class="form-control"
+            placeholder="you@example.com"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input
+            id="login-password"
+            type="password"
+            class="form-control"
+            placeholder="••••••••"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <button
+          id="login-submit"
+          type="submit"
+          class="btn btn-primary btn-full mt-2"
+          [disabled]="isLoading"
+        >
+          @if (isLoading) {
+            <span class="spinner"></span> Authenticating...
+          } @else {
+            Sign In  →
+          }
+        </button>
+
+      </div>
+    </form>
+
+    <div class="divider mt-3">or</div>
+
+    <p class="text-center text-sm text-muted mt-2">
+      Don't have an account?
+      <a routerLink="/register" class="text-link"> Create account</a>
+    </p>
+  </div>
+</div>

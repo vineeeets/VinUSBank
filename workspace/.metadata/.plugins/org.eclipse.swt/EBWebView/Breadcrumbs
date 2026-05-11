@@ -1,0 +1,93 @@
+1:03:41 Memory Pressure: Moderate
+1:03:51 Memory Pressure: Moderate
+1:04:01 Memory Pressure: Moderate
+1:04:11 Memory Pressure: Moderate
+1:04:21 Memory Pressure: Moderate
+1:04:31 Memory Pressure: Moderate
+1:04:41 Memory Pressure: Moderate
+1:04:51 Memory Pressure: None
+1:06:12 Memory Pressure: Moderate
+1:06:22 Memory Pressure: Moderate
+1:06:32 Memory Pressure: Moderate
+1:06:42 Memory Pressure: Moderate
+1:06:52 Memory Pressure: Moderate
+1:07:02 Memory Pressure: Moderate
+1:07:12 Memory Pressure: Moderate
+1:07:22 Memory Pressure: Moderate
+1:07:32 Memory Pressure: Moderate
+1:07:42 Memory Pressure: Moderate
+1:07:52 Memory Pressure: Moderate
+1:08:02 Memory Pressure: Moderate
+1:08:12 Memory Pressure: Moderate
+1:08:22 Memory Pressure: Moderate
+1:08:32 Memory Pressure: Moderate
+1:08:42 Memory Pressure: Moderate
+1:08:52 Memory Pressure: Moderate
+1:09:02 Memory Pressure: None
+1:18:23 Memory Pressure: Moderate
+1:18:28 Memory Pressure: None
+1:19:38 Memory Pressure: Moderate
+1:19:48 Memory Pressure: Moderate
+1:19:53 Memory Pressure: None
+1:22:08 Memory Pressure: Moderate
+1:22:13 Memory Pressure: None
+1:22:18 Memory Pressure: Moderate
+1:22:28 Memory Pressure: Moderate
+1:22:38 Memory Pressure: Moderate
+1:22:48 Memory Pressure: Moderate
+1:22:53 Memory Pressure: None
+1:28:09 Memory Pressure: Moderate
+1:28:14 Memory Pressure: None
+1:28:19 Memory Pressure: Moderate
+1:28:24 Memory Pressure: None
+1:29:19 Memory Pressure: Moderate
+1:29:24 Memory Pressure: None
+1:29:39 Memory Pressure: Moderate
+1:29:44 Memory Pressure: None
+1:29:49 Memory Pressure: Moderate
+1:29:54 Memory Pressure: None
+1:31:59 Memory Pressure: Moderate
+1:32:09 Memory Pressure: Moderate
+1:32:19 Memory Pressure: Moderate
+1:32:24 Memory Pressure: None
+1:35:59 Memory Pressure: Moderate
+1:36:04 Memory Pressure: None
+4:44:28 Memory Pressure: Moderate
+4:44:38 Memory Pressure: Moderate
+4:44:48 Memory Pressure: None
+4:44:51 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+4:44:51 Microsoft.UnloadController.HasCompletedUnloadProcessing_False
+4:44:51 Microsoft.Shutdown.OnWindowClosing
+4:44:51 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+4:44:51 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+4:44:51 Microsoft.Shutdown.TabStripModel.CloseAllTabs
+4:44:51 Microsoft.Shutdown.TabStripModel.CloseTabs
+4:44:51 Microsoft.Shutdown.TabStripModel.CloseTabs_EdgeBeforeClosingAllTabs
+4:44:51 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl
+4:44:51 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_TabClosable
+4:44:51 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_ClosingAll
+4:44:51 Microsoft.Shutdown.TabStripModel.CloseWebContentses
+4:44:51 Microsoft.Shutdown.TabStripModel.CloseWebContentses_FastShutdown
+4:44:51 Microsoft.Shutdown.TabStripModel.ShouldRunUnloadListenerBeforeClosing_false
+4:44:51 Tab4 RenderProcessGone
+4:44:51 Microsoft.UnloadController.ClearUnloadState
+4:44:51 Microsoft.Shutdown.TabStripModel.RunUnloadListenerBeforeClosing_false
+4:44:51 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_ClosedAll
+4:44:51 Microsoft.Shutdown.TabStripModel.SendDetachWebContentsNotifications
+4:44:51 Microsoft.UnloadController.ClearUnloadState
+4:44:51 Browser4 Close Tab4 at 0
+4:44:51 Tab4 WebContentsDestroyed
+4:44:52 Microsoft.UnloadController.TabStripEmpty
+4:44:52 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+4:44:52 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+4:44:52 Microsoft.Shutdown.OnWindowClosing
+4:44:52 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+4:44:52 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+4:44:52 Microsoft.Shutdown.OnWindowClosing_MaybeClearBrowsingDataOnExit
+4:44:52 Microsoft.Shutdown.OnWindowClosing_ClearBrowsingDataOnExitNotInProgress
+4:44:52 Microsoft.Shutdown.OnWindowClosingPostClearBrowsingData_NoBrowsingDataCleared
+4:44:52 Widget Closed: BrowserWidget
+4:44:52 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+4:44:52 Microsoft.Shutdown.OnWindowClosing
+4:44:52 Microsoft.Shutdown.OnWindowClosing_DeleteScheduled
+4:44:52 Microsoft.Browser_Removed

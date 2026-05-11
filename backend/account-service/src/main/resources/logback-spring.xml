@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ═══ Console Appender ═══ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%cyan(%thread)] %boldMagenta(%logger{36}) — %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══ Rolling File Appender ═══ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/account-service.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} — %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Roll daily, keep 30 days of history -->
+            <fileNamePattern>logs/account-service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ═══ Log Level Configuration ═══ -->
+    <!-- Root logger: INFO for everything else -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <!-- Our application code: DEBUG for full visibility -->
+    <logger name="com.vinusbank.accountservice" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Hibernate SQL: INFO (shows queries without being overwhelming) -->
+    <logger name="org.hibernate.SQL" level="INFO"/>
+
+    <!-- Feign client logs: DEBUG -->
+    <logger name="feign" level="DEBUG"/>
+
+    <!-- Eureka: WARN (suppress heartbeat noise) -->
+    <logger name="com.netflix.eureka" level="WARN"/>
+    <logger name="com.netflix.discovery" level="WARN"/>
+
+</configuration>

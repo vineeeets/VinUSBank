@@ -1,0 +1,445 @@
+<div class="dashboard-wrapper">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo-mark" style="margin-bottom:0;">
+      <div class="logo-icon">🏦</div>
+      <span class="logo-name gradient-text">VinUSBank</span>
+    </div>
+    <div class="navbar-actions">
+      @if (profile?.kycStatus) {
+        <span class="kyc-badge {{ getKycClass() }}">
+          🔐 KYC: {{ profile?.kycStatus }}
+        </span>
+      }
+      <button id="logout-btn" class="btn btn-ghost" (click)="logout()" style="padding:0.5rem 1rem;">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Dashboard Body -->
+  <main style="padding:2.5rem; max-width:1000px; margin:0 auto; width:100%; position:relative; z-index:1;">
+
+    <!-- Welcome Header -->
+    <div style="margin-bottom:2rem; animation: fadeInUp 0.4s ease;">
+      <h1 style="font-size:1.9rem; margin-bottom:0.3rem;">Welcome back 👋</h1>
+      <p class="text-muted">{{ userEmail || 'Loading...' }}</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav" style="display:flex; gap:0.25rem; margin-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0;">
+      <button id="tab-overview" class="tab-btn" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">📊 Overview</button>
+      <button id="tab-accounts" class="tab-btn" [class.active]="activeTab === 'accounts'" (click)="setTab('accounts')">🏦 Accounts</button>
+      <button id="tab-transfers" class="tab-btn" [class.active]="activeTab === 'transfers'" (click)="setTab('transfers')">💸 Transfers</button>
+      <button id="tab-loans" class="tab-btn" [class.active]="activeTab === 'loans'" (click)="setTab('loans')">🏠 Loans</button>
+      <button id="tab-cards" class="tab-btn" [class.active]="activeTab === 'cards'" (click)="setTab('cards')">💳 Cards</button>
+    </div>
+
+    <!-- ========== OVERVIEW TAB ========== -->
+    @if (activeTab === 'overview') {
+      <div style="animation: fadeInUp 0.35s ease;">
+
+        <!-- Stats Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:1.25rem; margin-bottom:2rem;">
+          <div class="stat-card card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value" style="color:#34d399;">${{ getTotalBalance() | number:'1.2-2' }}</div>
+          </div>
+          <div class="stat-card card" (click)="setTab('accounts')" style="cursor:pointer;">
+            <div class="stat-icon">🏦</div>
+            <div class="stat-label">Accounts</div>
+            <div class="stat-value">{{ accounts.length }}</div>
+          </div>
+          <div class="stat-card card" (click)="setTab('loans')" style="cursor:pointer;">
+            <div class="stat-icon">🏠</div>
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value">{{ loans.length }}</div>
+          </div>
+          <div class="stat-card card" (click)="setTab('cards')" style="cursor:pointer;">
+            <div class="stat-icon">💳</div>
+            <div class="stat-label">Cards</div>
+            <div class="stat-value">{{ cards.length }}</div>
+          </div>
+        </div>
+
+        <!-- Profile Quick View or CTA -->
+        @if (profile) {
+          <div class="card" style="margin-bottom:1.5rem;">
+            <h3 style="margin-bottom:1.5rem; font-size:1.1rem;">👤 Profile</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="info-item"><div class="info-label">Full Name</div><div class="info-val">{{ profile.firstName }} {{ profile.lastName }}</div></div>
+              <div class="info-item"><div class="info-label">Email</div><div class="info-val">{{ profile.email }}</div></div>
+              <div class="info-item"><div class="info-label">Phone</div><div class="info-val">{{ profile.phoneNumber || '—' }}</div></div>
+              <div class="info-item"><div class="info-label">Address</div><div class="info-val">{{ profile.address || '—' }}</div></div>
+            </div>
+          </div>
+        } @else if (!isLoading) {
+          <div class="card" style="text-align:center; padding:3rem; margin-bottom:1.5rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">📋</div>
+            <h3 style="margin-bottom:0.5rem;">Complete your Profile</h3>
+            <p class="text-muted text-sm" style="margin-bottom:1.5rem;">Fill in your KYC details to unlock all banking features.</p>
+            <button class="btn btn-primary" (click)="setTab('overview')">Complete Profile →</button>
+          </div>
+        }
+
+        <!-- Recent Transactions -->
+        @if (transactions.length > 0) {
+          <div class="card">
+            <h3 style="margin-bottom:1.25rem;">🔄 Recent Transactions</h3>
+            @for (txn of transactions.slice(0, 5); track txn.id) {
+              <div class="txn-row">
+                <div>
+                  <div style="font-weight:600; font-size:0.95rem;">{{ txn.transactionType | titlecase }}</div>
+                  <div class="text-muted text-sm">{{ txn.referenceNumber }}</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-weight:700; color:#34d399;">${{ txn.amount | number:'1.2-2' }}</div>
+                  <div class="text-muted text-sm">{{ txn.status }}</div>
+                </div>
+              </div>
+            }
+            <button class="btn btn-ghost btn-sm" style="margin-top:1rem;" (click)="setTab('transfers')">View all transactions →</button>
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- ========== ACCOUNTS TAB ========== -->
+    @if (activeTab === 'accounts') {
+      <div style="animation: fadeInUp 0.35s ease;">
+
+        @if (accountMsg) { <div class="alert alert-success" style="margin-bottom:1rem;">✅ {{ accountMsg }}</div> }
+        @if (accountError) { <div class="alert alert-danger" style="margin-bottom:1rem;">⚠️ {{ accountError }}</div> }
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2 style="font-size:1.2rem; margin:0;">My Accounts</h2>
+          <button class="btn btn-primary btn-sm" (click)="showOpenAccountForm = !showOpenAccountForm">+ Open Account</button>
+        </div>
+
+        <!-- Open Account Form -->
+        @if (showOpenAccountForm) {
+          <div class="card" style="margin-bottom:1.5rem; border: 1px solid rgba(99,102,241,0.4);">
+            <h3 style="margin-bottom:1.25rem; font-size:1rem;">Open New Account</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Account Type</label>
+                <select class="form-control" [(ngModel)]="newAccount.accountType" name="accType">
+                  <option value="CHECKING">Checking</option>
+                  <option value="SAVINGS">Savings</option>
+                  <option value="MONEY_MARKET">Money Market</option>
+                  <option value="CD">Certificate of Deposit</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Initial Deposit ($)</label>
+                <input type="number" class="form-control" [(ngModel)]="newAccount.initialDeposit" min="0" step="100" />
+              </div>
+              <div class="form-group" style="display:flex; align-items:flex-end;">
+                <button class="btn btn-primary" style="width:100%;" (click)="openNewAccount()">Open Account</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Accounts List -->
+        @if (accountsLoading) {
+          <div style="text-align:center; padding:3rem;"><span class="spinner"></span></div>
+        } @else if (accounts.length === 0) {
+          <div class="card" style="text-align:center; padding:3rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">🏦</div>
+            <h3>No accounts yet</h3>
+            <p class="text-muted text-sm">Open your first account to start banking.</p>
+          </div>
+        } @else {
+          <div style="display:grid; gap:1rem;">
+            @for (acc of accounts; track acc.id) {
+              <div class="card account-card">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                  <div>
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">{{ getAccountTypeIcon(acc.accountType) }}</div>
+                    <div style="font-size:0.85rem; color:#8899b4; margin-bottom:0.25rem;">{{ acc.accountType | titlecase }} · {{ acc.currency }}</div>
+                    <div style="font-family:monospace; font-size:0.9rem; color:#c5d3e8; letter-spacing:1px;">{{ acc.accountNumber }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div class="text-muted text-sm">Available Balance</div>
+                    <div style="font-size:1.8rem; font-weight:800; color:#34d399;">${{ acc.availableBalance | number:'1.2-2' }}</div>
+                    <span class="status-badge {{ acc.status === 'ACTIVE' ? 'status-active' : 'status-closed' }}">{{ acc.status }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- ========== TRANSFERS TAB ========== -->
+    @if (activeTab === 'transfers') {
+      <div style="animation: fadeInUp 0.35s ease;">
+
+        @if (transferMsg) { <div class="alert alert-success" style="margin-bottom:1rem;">✅ {{ transferMsg }}</div> }
+        @if (transferError) { <div class="alert alert-danger" style="margin-bottom:1rem;">⚠️ {{ transferError }}</div> }
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2 style="font-size:1.2rem; margin:0;">Transactions</h2>
+          <button class="btn btn-primary btn-sm" (click)="showTransferForm = !showTransferForm">+ New Transfer</button>
+        </div>
+
+        <!-- Transfer Form -->
+        @if (showTransferForm) {
+          <div class="card" style="margin-bottom:1.5rem; border: 1px solid rgba(99,102,241,0.4);">
+            <h3 style="margin-bottom:1.25rem; font-size:1rem;">💸 New Transfer</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">From Account</label>
+                <select class="form-control" [(ngModel)]="transferForm.sourceAccountId" name="src">
+                  <option value="" disabled>Select account</option>
+                  @for (acc of accounts; track acc.id) {
+                    <option [value]="acc.id">{{ acc.accountType }} — {{ acc.accountNumber }} (${{ acc.availableBalance | number:'1.2-2' }})</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Destination Account Number</label>
+                <input type="text" class="form-control" placeholder="VUS20260421XXXX" [(ngModel)]="transferForm.destinationAccountNumber" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Amount ($)</label>
+                <input type="number" class="form-control" placeholder="100.00" [(ngModel)]="transferForm.amount" min="0.01" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description (optional)</label>
+                <input type="text" class="form-control" placeholder="Rent, groceries…" [(ngModel)]="transferForm.description" />
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:0.75rem;" [disabled]="transferLoading" (click)="makeTransfer()">
+              @if (transferLoading) { <span class="spinner"></span> Processing... } @else { Send Transfer → }
+            </button>
+          </div>
+        }
+
+        <!-- Transaction History -->
+        @if (txnLoading) {
+          <div style="text-align:center; padding:3rem;"><span class="spinner"></span></div>
+        } @else if (transactions.length === 0) {
+          <div class="card" style="text-align:center; padding:3rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">🔄</div>
+            <h3>No transactions yet</h3>
+            <p class="text-muted text-sm">Make your first transfer to get started.</p>
+          </div>
+        } @else {
+          <div class="card">
+            <h3 style="margin-bottom:1.25rem; font-size:1rem;">Transaction History</h3>
+            @for (txn of transactions; track txn.id) {
+              <div class="txn-row">
+                <div>
+                  <div style="font-weight:600;">{{ txn.transactionType | titlecase }}</div>
+                  <div class="text-muted text-sm">{{ txn.referenceNumber }} · {{ txn.description || 'No description' }}</div>
+                  <div class="text-muted text-sm" style="font-size:0.78rem;">{{ txn.sourceAccountNumber }} → {{ txn.destinationAccountNumber }}</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-weight:700; color:#34d399; font-size:1.1rem;">${{ txn.amount | number:'1.2-2' }}</div>
+                  <span class="status-badge {{ txn.status === 'COMPLETED' ? 'status-active' : 'status-pending' }}">{{ txn.status }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- ========== LOANS TAB ========== -->
+    @if (activeTab === 'loans') {
+      <div style="animation: fadeInUp 0.35s ease;">
+
+        @if (loanMsg) { <div class="alert alert-success" style="margin-bottom:1rem;">✅ {{ loanMsg }}</div> }
+        @if (loanError) { <div class="alert alert-danger" style="margin-bottom:1rem;">⚠️ {{ loanError }}</div> }
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2 style="font-size:1.2rem; margin:0;">My Loans</h2>
+          <button class="btn btn-primary btn-sm" (click)="showLoanForm = !showLoanForm">+ Apply for Loan</button>
+        </div>
+
+        <!-- Loan Application Form -->
+        @if (showLoanForm) {
+          <div class="card" style="margin-bottom:1.5rem; border: 1px solid rgba(99,102,241,0.4);">
+            <h3 style="margin-bottom:1.25rem; font-size:1rem;">🏠 Loan Application</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Disbursement Account</label>
+                <select class="form-control" [(ngModel)]="loanForm.accountId" name="loanAcc">
+                  <option value="" disabled>Select account</option>
+                  @for (acc of accounts; track acc.id) {
+                    <option [value]="acc.id">{{ acc.accountType }} — {{ acc.accountNumber }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Loan Type</label>
+                <select class="form-control" [(ngModel)]="loanForm.loanType">
+                  <option value="PERSONAL">Personal</option>
+                  <option value="HOME">Home</option>
+                  <option value="AUTO">Auto</option>
+                  <option value="EDUCATION">Education</option>
+                  <option value="BUSINESS">Business</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Principal Amount ($)</label>
+                <input type="number" class="form-control" [(ngModel)]="loanForm.principalAmount" min="500" step="500" (change)="calculateEmi()" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tenure (months)</label>
+                <input type="number" class="form-control" [(ngModel)]="loanForm.tenureMonths" min="3" max="360" step="6" (change)="calculateEmi()" />
+              </div>
+              <div class="form-group" style="grid-column:span 2;">
+                <label class="form-label">Purpose</label>
+                <input type="text" class="form-control" placeholder="Home renovation, car purchase…" [(ngModel)]="loanForm.purpose" />
+              </div>
+            </div>
+
+            <!-- EMI Preview -->
+            @if (emiCalc) {
+              <div class="emi-preview">
+                <div class="emi-item"><span class="emi-label">Monthly EMI</span><span class="emi-val">${{ emiCalc.monthlyEmi | number:'1.2-2' }}</span></div>
+                <div class="emi-item"><span class="emi-label">Total Interest</span><span class="emi-val" style="color:#fbbf24;">${{ emiCalc.totalInterest | number:'1.2-2' }}</span></div>
+                <div class="emi-item"><span class="emi-label">Total Payable</span><span class="emi-val">${{ emiCalc.totalPayable | number:'1.2-2' }}</span></div>
+                <div class="emi-item"><span class="emi-label">Rate p.a.</span><span class="emi-val">{{ (emiCalc.annualInterestRate * 100) | number:'1.2-2' }}%</span></div>
+              </div>
+              @if (loanForm.principalAmount < 10000) {
+                <div style="font-size:0.8rem; color:#34d399; margin-top:0.5rem;">✅ Loans under $10,000 are instantly approved and disbursed!</div>
+              }
+            }
+
+            <button class="btn btn-primary" style="margin-top:1rem;" [disabled]="loanLoading" (click)="applyForLoan()">
+              @if (loanLoading) { <span class="spinner"></span> Submitting... } @else { Submit Application → }
+            </button>
+          </div>
+        }
+
+        <!-- Loans List -->
+        @if (loansLoading) {
+          <div style="text-align:center; padding:3rem;"><span class="spinner"></span></div>
+        } @else if (loans.length === 0) {
+          <div class="card" style="text-align:center; padding:3rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">🏠</div>
+            <h3>No active loans</h3>
+            <p class="text-muted text-sm">Apply for a personal, home, or auto loan.</p>
+          </div>
+        } @else {
+          <div style="display:grid; gap:1rem;">
+            @for (loan of loans; track loan.id) {
+              <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                  <div>
+                    <div style="font-size:0.8rem; color:#8899b4; margin-bottom:0.25rem;">{{ loan.loanNumber }}</div>
+                    <div style="font-weight:700; font-size:1rem;">{{ loan.loanType | titlecase }} Loan</div>
+                    <div class="text-muted text-sm">{{ loan.tenureMonths }} months · {{ (loan.interestRate * 100) | number:'1.2-2' }}% p.a.</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div class="text-muted text-sm">Principal</div>
+                    <div style="font-size:1.5rem; font-weight:800; color:#c5d3e8;">${{ loan.principalAmount | number:'1.2-2' }}</div>
+                    <span class="status-badge {{ getLoanStatusClass(loan.status) }}">{{ loan.status }}</span>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.06);">
+                  <div><div class="text-muted text-sm">Monthly EMI</div><div style="font-weight:600;">${{ loan.emiAmount | number:'1.2-2' }}</div></div>
+                  <div><div class="text-muted text-sm">Total Payable</div><div style="font-weight:600;">${{ loan.totalPayable | number:'1.2-2' }}</div></div>
+                  <div><div class="text-muted text-sm">Outstanding</div><div style="font-weight:600; color:#f87171;">${{ loan.outstandingBalance | number:'1.2-2' }}</div></div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- ========== CARDS TAB ========== -->
+    @if (activeTab === 'cards') {
+      <div style="animation: fadeInUp 0.35s ease;">
+
+        @if (cardMsg) { <div class="alert alert-success" style="margin-bottom:1rem;">✅ {{ cardMsg }}</div> }
+        @if (cardError) { <div class="alert alert-danger" style="margin-bottom:1rem;">⚠️ {{ cardError }}</div> }
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2 style="font-size:1.2rem; margin:0;">My Cards</h2>
+          <button class="btn btn-primary btn-sm" (click)="showCardForm = !showCardForm">+ Request Card</button>
+        </div>
+
+        <!-- Request Card Form -->
+        @if (showCardForm) {
+          <div class="card" style="margin-bottom:1.5rem; border: 1px solid rgba(99,102,241,0.4);">
+            <h3 style="margin-bottom:1.25rem; font-size:1rem;">💳 Request Virtual Debit Card</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Linked Account</label>
+                <select class="form-control" [(ngModel)]="cardForm.accountId">
+                  <option value="" disabled>Select account</option>
+                  @for (acc of accounts; track acc.id) {
+                    <option [value]="acc.id">{{ acc.accountType }} — {{ acc.accountNumber }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Cardholder Name</label>
+                <input type="text" class="form-control" placeholder="VINEET KUMAR" [(ngModel)]="cardForm.cardholderName" />
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:0.75rem;" (click)="requestCard()">Request Card →</button>
+          </div>
+        }
+
+        <!-- Cards List -->
+        @if (cardsLoading) {
+          <div style="text-align:center; padding:3rem;"><span class="spinner"></span></div>
+        } @else if (cards.length === 0) {
+          <div class="card" style="text-align:center; padding:3rem;">
+            <div style="font-size:3rem; margin-bottom:1rem;">💳</div>
+            <h3>No cards yet</h3>
+            <p class="text-muted text-sm">Request a virtual debit card linked to your account.</p>
+          </div>
+        } @else {
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:1.25rem;">
+            @for (card of cards; track card.id) {
+              <div class="virtual-card">
+                <div class="card-brand">VinUSBank</div>
+                <div class="card-chip">◼◼◼◼</div>
+                <div class="card-number">{{ card.cardNumberMasked }}</div>
+                <div class="card-footer">
+                  <div>
+                    <div style="font-size:0.65rem; opacity:0.6; text-transform:uppercase;">Cardholder</div>
+                    <div style="font-size:0.85rem; font-weight:600;">{{ card.cardholderName }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:0.65rem; opacity:0.6; text-transform:uppercase;">Expires</div>
+                    <div style="font-size:0.85rem; font-weight:600;">{{ card.expiryMonth }}/{{ card.expiryYear }}</div>
+                  </div>
+                </div>
+                <div class="card-actions">
+                  <span class="status-badge {{ getCardStatusClass(card.status) }}">{{ card.status }}</span>
+                  @if (card.status === 'PENDING') {
+                    <button class="btn btn-primary btn-xs" (click)="activateCard(card.id)">Activate</button>
+                  }
+                  @if (card.status === 'ACTIVE') {
+                    <button class="btn btn-danger btn-xs" (click)="blockCard(card.id)">Block</button>
+                  }
+                  @if (card.status === 'BLOCKED') {
+                    <button class="btn btn-ghost btn-xs" (click)="unblockCard(card.id)">Unblock</button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+  </main>
+</div>
