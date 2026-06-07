@@ -1,1 +1,22 @@
-/* Register page uses global auth-wrapper styles from styles.css */
+/* ============================================================
+   Register Component — Styles
+   ============================================================ */
+
+/* Subtle background glow for the form panel */
+.auth-form-panel {
+  background-image:
+    radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.03) 0%, transparent 60%);
+}
+
+/* Mobile: show compact logo above form */
+@media (max-width: 900px) {
+  .auth-form-container::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    margin: 0 auto var(--space-8);
+  }
+}

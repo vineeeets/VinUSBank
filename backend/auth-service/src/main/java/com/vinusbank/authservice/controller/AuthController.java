@@ -4,6 +4,8 @@ import com.vinusbank.authservice.entity.User;
 import com.vinusbank.authservice.repository.UserRepository;
 import com.vinusbank.authservice.security.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.aerogear.security.otp.Totp;
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Authentication Controller
- * WHY WE NEED THIS: This defines the exact /api/auth API endpoints that Postman
- * and Angular hit.
- * HOW IT WORKS: It maps JSON requests to Java methods, interacting with
- * databases and our Security config.
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -54,6 +49,7 @@ public class AuthController {
                 .email(email)
                 .password(encoder.encode(request.get("password")))
                 .role("ROLE_CUSTOMER")
+                .mfaEnabled(false)
                 .build();
 
         userRepository.save(user);
@@ -74,6 +70,18 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, request.get("password")));
             
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (user.isMfaEnabled()) {
+                log.info("[AUTH-CTRL] MFA required for user: {}", email);
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "MFA required");
+                response.put("mfaRequired", true);
+                // We return success but indicate MFA is required. 
+                // Client must call /api/auth/mfa/verify next.
+                return ResponseEntity.ok(response);
+            }
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtil.generateJwtToken(authentication);
             
@@ -85,8 +93,105 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.warn("[AUTH-CTRL] ✗ Login failed | User: {} | Reason: {}", email, e.getMessage());
-            throw e;
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
+    }
+
+    @PostMapping("/mfa/setup")
+    public ResponseEntity<?> setupMfa(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        try {
+            // Authenticate user to ensure they are the owner
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, request.get("password")));
+
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            
+            if (user.isMfaEnabled()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "MFA is already enabled"));
+            }
+
+            String secret = Base32.random();
+            user.setMfaSecret(secret);
+            userRepository.save(user);
+
+            log.info("[AUTH-CTRL] MFA setup initialized for user: {}", email);
+
+            // Return the secret so client can generate QR code
+            // Format for authenticator apps: otpauth://totp/VinUSBank:email?secret=...&issuer=VinUSBank
+            String qrUrl = String.format("otpauth://totp/VinUSBank:%s?secret=%s&issuer=VinUSBank", email, secret);
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "MFA setup initialized");
+            response.put("secret", secret);
+            response.put("qrUrl", qrUrl);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
+    }
+
+    @PostMapping("/mfa/enable")
+    public ResponseEntity<?> enableMfa(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String code = request.get("code");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, request.get("password")));
+
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            
+            if (user.isMfaEnabled()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "MFA is already enabled"));
+            }
+
+            Totp totp = new Totp(user.getMfaSecret());
+            if (totp.verify(code)) {
+                user.setMfaEnabled(true);
+                userRepository.save(user);
+                log.info("[AUTH-CTRL] MFA successfully enabled for user: {}", email);
+                return ResponseEntity.ok(Map.of("message", "MFA enabled successfully"));
+            } else {
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid MFA code"));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
+    }
+
+    @PostMapping("/mfa/verify")
+    public ResponseEntity<?> verifyMfa(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String code = request.get("code");
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, request.get("password")));
+
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            
+            if (!user.isMfaEnabled()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "MFA is not enabled for this user"));
+            }
+
+            Totp totp = new Totp(user.getMfaSecret());
+            if (totp.verify(code)) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                String jwt = jwtUtil.generateJwtToken(authentication);
+                
+                log.info("[AUTH-CTRL] ✓ MFA Login successful | User: {}", email);
+                
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Login successful");
+                response.put("token", jwt);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid MFA code"));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials or code"));
         }
     }
 }
-

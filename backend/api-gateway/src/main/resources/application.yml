@@ -59,6 +59,20 @@ spring:
           filters:
             - StripPrefix=1
             - AuthenticationFilter
+        - id: compliance-service
+          uri: lb://compliance-service
+          predicates:
+            - Path=/compliance-service/**
+          filters:
+            - StripPrefix=1
+            - AuthenticationFilter
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification-service/**
+          filters:
+            - StripPrefix=1
+            - AuthenticationFilter
 
 eureka:
   instance:

@@ -1,96 +1,159 @@
-<div class="auth-wrapper">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+<div class="auth-layout">
 
-  <div class="auth-card card">
-    <!-- Logo -->
-    <div class="logo-mark">
-      <div class="logo-icon">🏦</div>
-      <span class="logo-name gradient-text">VinUSBank</span>
+  <!-- ═══ Brand Panel (Left) ═══ -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-content">
+
+      <div class="auth-brand-logo">
+        <div class="auth-brand-logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/>
+            <path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/>
+          </svg>
+        </div>
+        <span class="sidebar-logo-text gradient-text">VinUSBank</span>
+      </div>
+
+      <h2 class="auth-brand-tagline">Start your financial journey today</h2>
+      <p class="auth-brand-description">Open a free account in minutes. No minimum balance required. Get started with checking, savings, and more.</p>
+
+      <div class="auth-brand-features">
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <span>FDIC insured up to $250,000</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <span>Account setup in under 2 minutes</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span>24/7 AI-powered customer support</span>
+        </div>
+      </div>
+
     </div>
-
-    <h1 style="font-size:1.75rem; margin-bottom:0.4rem;">Create your account</h1>
-    <p class="text-muted text-sm" style="margin-bottom:2rem;">Join VinUSBank — your AI-powered financial future</p>
-
-    <!-- Alerts -->
-    @if (errorMessage) {
-      <div class="alert alert-danger" style="margin-bottom:1.5rem;">
-        <span>⚠️</span> {{ errorMessage }}
-      </div>
-    }
-    @if (successMessage) {
-      <div class="alert alert-success" style="margin-bottom:1.5rem;">
-        <span>✅</span> {{ successMessage }}
-      </div>
-    }
-
-    <!-- Form -->
-    <form (ngSubmit)="onSubmit()" id="register-form">
-      <div style="display:flex; flex-direction:column; gap:1.25rem;">
-
-        <div class="form-group">
-          <label class="form-label" for="reg-email">Email Address</label>
-          <input
-            id="reg-email"
-            type="email"
-            class="form-control"
-            placeholder="you@example.com"
-            [(ngModel)]="email"
-            name="email"
-            autocomplete="email"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="reg-password">Password</label>
-          <input
-            id="reg-password"
-            type="password"
-            class="form-control"
-            placeholder="Minimum 8 characters"
-            [(ngModel)]="password"
-            name="password"
-            autocomplete="new-password"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="reg-confirm">Confirm Password</label>
-          <input
-            id="reg-confirm"
-            type="password"
-            class="form-control"
-            placeholder="Re-enter your password"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-            autocomplete="new-password"
-            required
-          />
-        </div>
-
-        <button
-          id="register-submit"
-          type="submit"
-          class="btn btn-primary btn-full mt-2"
-          [disabled]="isLoading"
-        >
-          @if (isLoading) {
-            <span class="spinner"></span> Creating Account...
-          } @else {
-            Create Account  →
-          }
-        </button>
-
-      </div>
-    </form>
-
-    <div class="divider mt-3">or</div>
-
-    <p class="text-center text-sm text-muted mt-2">
-      Already have an account?
-      <a routerLink="/login" class="text-link"> Sign in</a>
-    </p>
   </div>
+
+  <!-- ═══ Form Panel (Right) ═══ -->
+  <div class="auth-form-panel">
+    <div class="auth-form-container">
+
+      <div class="auth-form-header">
+        <h1>Create your account</h1>
+        <p>Join VinUSBank — your AI-powered financial future</p>
+      </div>
+
+      <!-- Alerts -->
+      @if (errorMessage) {
+        <div class="alert alert-danger mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>{{ successMessage }}</span>
+        </div>
+      }
+
+      <!-- Register Form -->
+      <form (ngSubmit)="onSubmit()" id="register-form">
+        <div class="auth-form-fields">
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,7 12,13 2,7"/>
+              </svg>
+              <input
+                id="reg-email"
+                type="email"
+                class="form-control"
+                placeholder="you@example.com"
+                [(ngModel)]="email"
+                name="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                id="reg-password"
+                type="password"
+                class="form-control"
+                placeholder="Minimum 8 characters"
+                [(ngModel)]="password"
+                name="password"
+                autocomplete="new-password"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-confirm">Confirm Password</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <input
+                id="reg-confirm"
+                type="password"
+                class="form-control"
+                placeholder="Re-enter your password"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword"
+                autocomplete="new-password"
+                required
+              />
+            </div>
+          </div>
+
+          <button
+            id="register-submit"
+            type="submit"
+            class="btn btn-primary btn-lg btn-full"
+            [disabled]="isLoading"
+          >
+            @if (isLoading) {
+              <span class="spinner"></span> Creating Account...
+            } @else {
+              Create Account
+            }
+          </button>
+
+        </div>
+      </form>
+
+      <div class="divider mt-6 mb-4">or</div>
+
+      <div class="auth-form-footer">
+        <p>Already have an account? <a routerLink="/login" class="text-link">Sign in</a></p>
+      </div>
+
+    </div>
+  </div>
+
 </div>

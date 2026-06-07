@@ -7,6 +7,7 @@ import com.vinusbank.transactionservice.entity.Transaction;
 import com.vinusbank.transactionservice.repository.TransactionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ public class TransactionServiceImpl {
 
     @Autowired
     private AccountServiceClient accountServiceClient;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     private static final AtomicInteger refCounter = new AtomicInteger(1);
 
@@ -118,6 +122,17 @@ public class TransactionServiceImpl {
         transactionRepository.save(txn);
         log.info("[TRANSFER] ✓ Transfer complete | Ref: {} | From: {} → To: {} | Amount: ${}",
                 refNum, sourceAccountNumber, destinationAccountNumber, request.getAmount());
+
+        // Publish event
+        try {
+            String destEmail = (String) destAccount.get("customerEmail");
+            String eventPayload = String.format("{\"sourceAccountEmail\":\"%s\", \"destinationAccountEmail\":\"%s\", \"amount\":%s, \"referenceNumber\":\"%s\", \"description\":\"%s\"}",
+                    customerEmail, destEmail, request.getAmount(), refNum, request.getDescription());
+            kafkaTemplate.send("txn.completed", eventPayload);
+            log.info("[TRANSFER] Published txn.completed event for Ref: {}", refNum);
+        } catch (Exception e) {
+            log.error("[TRANSFER] Failed to publish txn.completed event", e);
+        }
 
         return TransactionResponse.from(txn);
     }

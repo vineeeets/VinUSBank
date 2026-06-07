@@ -28,6 +28,13 @@ public class User {
     @Column(nullable = false)
     private String role; // e.g., ROLE_CUSTOMER, ROLE_ADMIN
 
+    @Column(name = "mfa_enabled", nullable = false)
+    @Builder.Default
+    private boolean mfaEnabled = false;
+
+    @Column(name = "mfa_secret")
+    private String mfaSecret;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

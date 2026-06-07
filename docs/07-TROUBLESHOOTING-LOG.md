@@ -165,3 +165,33 @@ Ensure your JSON Body is set to "raw" and "JSON" and uses the correct CamelCase 
     "address": "123 Wall Street, NY"
 }
 ```
+
+---
+
+## Error 8: "Invalid Credentials" During Login with Mismatched Database Password Hashes
+
+**Symptom:**
+When attempting to log in via Postman or the Angular UI using the standard testing credentials (`customer@vinusbank.com` and `SecurePassword123!`), the frontend displays a login failure message and the `auth-service` log records: `[AUTH-CTRL] ✗ Login failed | User: customer@vinusbank.com`.
+
+**Why it happened:**
+The database record for `customer@vinusbank.com` was registered during an earlier testing session (e.g. weeks ago) with a different password. When the user attempted to log in using `SecurePassword123!`, the BCrypt hash comparison failed because the stored hash in the database did not match.
+
+**How we diagnosed it:**
+1. **Database Inspection:** We queried the MySQL container directly:
+   ```bash
+   docker exec vinusbank-mysql mysql -u root -prootpassword -e "SELECT * FROM vinusbank_auth.users;"
+   ```
+   This confirmed the user `customer@vinusbank.com` did exist in the database (registered on `2026-04-15`), but the stored hash did not match a valid BCrypt signature for `SecurePassword123!`.
+2. **Generating Hash:** To obtain the correct BCrypt hash for `SecurePassword123!`, we wrote a temporary Java utility [BCryptGen.java](file:///d:/Antigravity%20Projects/backend/auth-service/src/main/java/com/vinusbank/authservice/BCryptGen.java) inside the `auth-service` module to harness the project's native Spring Security encoder. We ran it using:
+   ```bash
+   mvn compile exec:java -Dexec.mainClass=com.vinusbank.authservice.BCryptGen
+   ```
+   This printed the correct hash: `$2a$10$Ao3myPCp4b0SPvBHzpIYyea.VIdzEHL1Mf7MNGEB55SRpf09fLjSG`.
+
+**The Solution:**
+1. **SQL Reset:** We updated the user's password in the database directly to the correct BCrypt hash using the MySQL CLI:
+   ```bash
+   docker exec vinusbank-mysql mysql -u root -prootpassword -e "UPDATE vinusbank_auth.users SET password = '\$2a\$10\$Ao3myPCp4b0SPvBHzpIYyea.VIdzEHL1Mf7MNGEB55SRpf09fLjSG' WHERE email = 'customer@vinusbank.com';"
+   ```
+2. **Cleanup:** We deleted the temporary `BCryptGen.java` file from the repository codebase to prevent code clutter.
+

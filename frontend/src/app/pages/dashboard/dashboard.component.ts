@@ -18,9 +18,11 @@ import { CardService, Card } from '../../services/card.service';
 })
 export class DashboardComponent implements OnInit {
 
-  // ── Navigation ────────────────────────────────────────────
+  // ── Navigation & Layout ────────────────────────────────────
   activeTab: 'overview' | 'accounts' | 'transfers' | 'loans' | 'cards' = 'overview';
   userEmail = '';
+  drawerOpen = false;
+  currentDate = '';
 
   // ── Profile (Overview tab) ────────────────────────────────
   profile: CustomerProfile | null = null;
@@ -78,6 +80,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.userEmail = this.authService.getEmailFromToken() || '';
+    this.currentDate = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
     this.loadProfile();
     this.loadAccounts();
     this.loadTransactions();
@@ -90,8 +95,24 @@ export class DashboardComponent implements OnInit {
     this.activeTab = tab;
   }
 
+  toggleDrawer(): void { this.drawerOpen = !this.drawerOpen; }
+  closeDrawer(): void { this.drawerOpen = false; }
   logout(): void { this.authService.logout(); }
   getKycClass(): string { return this.profile?.kycStatus?.toLowerCase() || 'pending'; }
+
+  getGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  getInitials(): string {
+    if (this.profile?.firstName && this.profile?.lastName) {
+      return this.profile.firstName.charAt(0).toUpperCase() + this.profile.lastName.charAt(0).toUpperCase();
+    }
+    return this.userEmail ? this.userEmail.charAt(0).toUpperCase() : 'U';
+  }
 
   // ─── Profile ──────────────────────────────────────────────
   loadProfile(): void {

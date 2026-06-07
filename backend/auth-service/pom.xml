@@ -65,6 +65,13 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+        
+        <!-- MFA / TOTP Dependency -->
+        <dependency>
+            <groupId>org.jboss.aerogear</groupId>
+            <artifactId>aerogear-otp-java</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

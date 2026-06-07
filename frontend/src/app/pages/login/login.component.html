@@ -1,77 +1,141 @@
-<div class="auth-wrapper">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+<div class="auth-layout">
 
-  <div class="auth-card card">
-    <!-- Logo -->
-    <div class="logo-mark">
-      <div class="logo-icon">🏦</div>
-      <span class="logo-name gradient-text">VinUSBank</span>
+  <!-- ═══ Brand Panel (Left) ═══ -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-content">
+
+      <div class="auth-brand-logo">
+        <div class="auth-brand-logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/>
+            <path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/>
+          </svg>
+        </div>
+        <span class="sidebar-logo-text gradient-text">VinUSBank</span>
+      </div>
+
+      <h2 class="auth-brand-tagline">Banking designed for the modern world</h2>
+      <p class="auth-brand-description">Manage your finances with confidence. Secure transfers, smart loans, and AI-powered insights — all in one place.</p>
+
+      <div class="auth-brand-features">
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <span>Bank-grade encryption & security</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <span>Instant transfers & real-time tracking</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <span>Virtual debit cards, issued instantly</span>
+        </div>
+      </div>
+
     </div>
-
-    <h1 style="font-size:1.75rem; margin-bottom:0.4rem;">Welcome back</h1>
-    <p class="text-muted text-sm" style="margin-bottom:2rem;">Sign in to access your banking dashboard</p>
-
-    <!-- Error Alert -->
-    @if (errorMessage) {
-      <div class="alert alert-danger" style="margin-bottom:1.5rem;">
-        <span>⚠️</span> {{ errorMessage }}
-      </div>
-    }
-
-    <!-- Form -->
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" id="login-form">
-      <div style="display:flex; flex-direction:column; gap:1.25rem;">
-
-        <div class="form-group">
-          <label class="form-label" for="login-email">Email Address</label>
-          <input
-            id="login-email"
-            type="email"
-            class="form-control"
-            placeholder="you@example.com"
-            [(ngModel)]="email"
-            name="email"
-            autocomplete="email"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="login-password">Password</label>
-          <input
-            id="login-password"
-            type="password"
-            class="form-control"
-            placeholder="••••••••"
-            [(ngModel)]="password"
-            name="password"
-            autocomplete="current-password"
-            required
-          />
-        </div>
-
-        <button
-          id="login-submit"
-          type="submit"
-          class="btn btn-primary btn-full mt-2"
-          [disabled]="isLoading"
-        >
-          @if (isLoading) {
-            <span class="spinner"></span> Authenticating...
-          } @else {
-            Sign In  →
-          }
-        </button>
-
-      </div>
-    </form>
-
-    <div class="divider mt-3">or</div>
-
-    <p class="text-center text-sm text-muted mt-2">
-      Don't have an account?
-      <a routerLink="/register" class="text-link"> Create account</a>
-    </p>
   </div>
+
+  <!-- ═══ Form Panel (Right) ═══ -->
+  <div class="auth-form-panel">
+    <div class="auth-form-container">
+
+      <div class="auth-form-header">
+        <h1>Welcome back</h1>
+        <p>Sign in to access your banking dashboard</p>
+      </div>
+
+      <!-- Error Alert -->
+      @if (errorMessage) {
+        <div class="alert alert-danger mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      <!-- Login Form -->
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" id="login-form">
+        <div class="auth-form-fields">
+
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,7 12,13 2,7"/>
+              </svg>
+              <input
+                id="login-email"
+                type="email"
+                class="form-control"
+                placeholder="you@example.com"
+                [(ngModel)]="email"
+                name="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                id="login-password"
+                type="password"
+                class="form-control"
+                placeholder="Enter your password"
+                [(ngModel)]="password"
+                name="password"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="auth-form-options">
+            <label>
+              <input type="checkbox" /> Remember me
+            </label>
+            <a href="#" class="text-link text-sm">Forgot password?</a>
+          </div>
+
+          <button
+            id="login-submit"
+            type="submit"
+            class="btn btn-primary btn-lg btn-full"
+            [disabled]="isLoading"
+          >
+            @if (isLoading) {
+              <span class="spinner"></span> Authenticating...
+            } @else {
+              Sign In
+            }
+          </button>
+
+        </div>
+      </form>
+
+      <div class="divider mt-6 mb-4">or</div>
+
+      <div class="auth-form-footer">
+        <p>Don't have an account? <a routerLink="/register" class="text-link">Create account</a></p>
+      </div>
+
+    </div>
+  </div>
+
 </div>

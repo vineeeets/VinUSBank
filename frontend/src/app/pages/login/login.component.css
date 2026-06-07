@@ -1,2 +1,41 @@
-/* Login & Register pages share the global auth-wrapper styles from styles.css */
-/* Component-level overrides only */
+/* ============================================================
+   Login Component — Styles
+   ============================================================ */
+
+/* Additional mobile-specific adjustments for login */
+.auth-form-container {
+  animation: fadeInUp 0.5s var(--ease-out);
+}
+
+/* Subtle focus glow on the form card area */
+.auth-form-panel {
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.03) 0%, transparent 60%);
+}
+
+/* Password field eye icon (future use) */
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-default);
+}
+.password-toggle:hover {
+  color: var(--color-text-secondary);
+}
+
+/* Mobile: show a compact logo above the form */
+@media (max-width: 900px) {
+  .auth-form-container::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    margin: 0 auto var(--space-8);
+  }
+}

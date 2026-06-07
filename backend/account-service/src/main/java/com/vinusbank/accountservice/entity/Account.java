@@ -77,6 +77,6 @@ public class Account {
     }
 
     public enum AccountStatus {
-        ACTIVE, FROZEN, DORMANT, CLOSED
+        PENDING, ACTIVE, FROZEN, SUSPENDED, DORMANT, CLOSED
     }
 }
